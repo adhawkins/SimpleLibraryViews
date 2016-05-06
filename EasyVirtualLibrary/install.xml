@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <extension>
-	<id>91d8fb10-ecbc-11e3-ac10-0800200c9a66</id>
-	<name>PLUGIN_LIBRARY_DEMO</name>
-	<module>Slim::Plugin::LibraryDemo::Plugin</module>
-	<importmodule>Slim::Plugin::LibraryDemo::Plugin</importmodule>
+	<id>011825f6-4e06-4d5a-aa48-fad6b59e837b</id>
+	<name>PLUGIN_EASY_VIRTUAL_LIBRARY</name>
+	<module>Plugins::EasyVirtualLibrary::Plugin</module>
+	<importmodule>Plugins::EasyVirtualLibrary::Plugin</importmodule>
 	<version>1.0</version>
-	<description>PLUGIN_LIBRARY_DEMO_DESC</description>
-	<creator>Logitech</creator>
+	<description>PLUGIN_EASY_VIRTUAL_LIBRARY_DESC</description>
+	<creator>Andy Hawkins</creator>
 	<defaultState>disabled</defaultState>
-	<homepageURL>http://www.mysqueezebox.com/support</homepageURL>
+	<homepageURL>http://www.gently.org.uk</homepageURL>
 	<targetApplication>
 		<id>Logitech Media Server</id>
 		<minVersion>7.9.0</minVersion>
