@@ -9,6 +9,7 @@
 	<creator>Andy Hawkins</creator>
 	<defaultState>disabled</defaultState>
 	<homepageURL>http://www.gently.org.uk</homepageURL>
+	<optionsURL>plugins/EasyVirtualLibrary/settings/basic.html</optionsURL>
 	<targetApplication>
 		<id>Logitech Media Server</id>
 		<minVersion>7.9.0</minVersion>

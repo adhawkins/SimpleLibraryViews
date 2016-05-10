@@ -13,6 +13,7 @@ use Slim::Menu::BrowseLibrary;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use File::Basename;
+use Slim::Utils::Prefs;
 
 my $log = Slim::Utils::Log->addLogCategory({
         'category'     => 'plugin.easyvirtuallibrary',
@@ -20,21 +21,63 @@ my $log = Slim::Utils::Log->addLogCategory({
         'description'  => 'PLUGIN_EASY_VIRTUAL_LIBRARY_DESC',
 });
 
+if ( main::WEBUI ) {
+	require Plugins::EasyVirtualLibrary::Settings;
+}
+
+my $prefs = preferences('plugin.easyvirtuallibrary');
+
+my @libraryIDs=();
+
 sub initPlugin {
 	my $class = shift;
 
 	$log->info("In initPlugin for EasyVirtualLibrary");
 
-	Slim::Music::VirtualLibraries->registerLibrary( {
-		id => 'Andy',
-		name => 'Library based on some complex processing',
-		scannerCB => sub {
-			my $libraryId = shift;
-			createLibrary($libraryId, 'Andy');
-		}
-	} );
+	if ( main::WEBUI ) {
+		Plugins::EasyVirtualLibrary::Settings->new;
+	}
+
+	registerLibraries();
 
 	$class->SUPER::initPlugin(@_);
+}
+
+sub registerLibraries {
+	$log->info("In registerLibraries: '" . $prefs->get('libraries') . "'");
+
+	foreach my $libraryID (@libraryIDs) {
+		$log->info("Unregistering $libraryID");
+
+		Slim::Music::VirtualLibraries->unregisterLibrary($libraryID);
+	}
+
+	@libraryIDs=();
+
+	my @libraries = split(/;/, $prefs->get('libraries'));
+	foreach my $library (@libraries) {
+		$library =~ s/^\s+|\s+$//g;
+		$log->info("Checking library '$library'");
+		if ($library ne "" ) {
+			$log->info("Processing library '$library'");
+
+			my $newID = Slim::Music::VirtualLibraries->registerLibrary( {
+				id => $library,
+				name => "EasyVirtualLibrary $library",
+				scannerCB => sub {
+					my $libraryId = shift;
+					createLibrary($libraryId, $library);
+				}
+			} );
+
+			$log->info("Registered library $newID");
+			push @libraryIDs, $newID;
+		}
+	}
+}
+
+sub getDisplayName {
+	return 'PLUGIN_EASY_VIRTUAL_LIBRARY';
 }
 
 sub createLibrary {
@@ -70,3 +113,7 @@ sub createLibrary {
 		}
 	} while ($obj);
 }
+
+1;
+
+__END__
