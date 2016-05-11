@@ -4,10 +4,10 @@
 	<name>PLUGIN_EASY_VIRTUAL_LIBRARY</name>
 	<module>Plugins::EasyVirtualLibrary::Plugin</module>
 	<importmodule>Plugins::EasyVirtualLibrary::Plugin</importmodule>
-	<version>0.2.0</version>
+	<version>0.3.0</version>
 	<description>PLUGIN_EASY_VIRTUAL_LIBRARY_DESC</description>
 	<creator>Andy Hawkins</creator>
-	<defaultState>disabled</defaultState>
+	<defaultState>enabled</defaultState>
 	<homepageURL>http://software.gently.org.uk/slim-plugins/EasyVirtualLibrary</homepageURL>
 	<optionsURL>plugins/EasyVirtualLibrary/settings/basic.html</optionsURL>
 	<targetApplication>
