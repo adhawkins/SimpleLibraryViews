@@ -5,7 +5,7 @@ PLUGIN_EASY_VIRTUAL_LIBRARY_DESC
 	EN	Plugin to easily generate virtual libraries.
 
 SETUP_GROUP_EASY_VIRTUAL_LIBRARY_DESC
-	EN	The Easy Virtual Libraries allows for the easy definition of Virtual Libraries by creating appropriately named files in an album's directory.
+	EN	The Easy Virtual Libraries plugin allows for the easy definition of Virtual Libraries by creating appropriately named files in an album's directory.
 
 SETUP_PLUGIN_EASY_VIRTUAL_LIBRARY_LIBRARIES
 	EN	Library names
