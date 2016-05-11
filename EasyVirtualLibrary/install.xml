@@ -4,15 +4,15 @@
 	<name>PLUGIN_EASY_VIRTUAL_LIBRARY</name>
 	<module>Plugins::EasyVirtualLibrary::Plugin</module>
 	<importmodule>Plugins::EasyVirtualLibrary::Plugin</importmodule>
-	<version>1.0</version>
+	<version>0.2.0</version>
 	<description>PLUGIN_EASY_VIRTUAL_LIBRARY_DESC</description>
 	<creator>Andy Hawkins</creator>
 	<defaultState>disabled</defaultState>
-	<homepageURL>http://www.gently.org.uk</homepageURL>
+	<homepageURL>http://software.gently.org.uk/slim-plugins/EasyVirtualLibrary</homepageURL>
 	<optionsURL>plugins/EasyVirtualLibrary/settings/basic.html</optionsURL>
 	<targetApplication>
 		<id>Logitech Media Server</id>
 		<minVersion>7.9.0</minVersion>
-        <maxVersion>*</maxVersion>
+		<maxVersion>*</maxVersion>
 	</targetApplication>
 </extension>
