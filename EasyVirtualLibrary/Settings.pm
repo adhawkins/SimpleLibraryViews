@@ -45,7 +45,7 @@ sub handler {
 
 		if ($force_register) {
 			$log->info("Forcing re-registering of libraries due to settings changes");
-			Plugins::EasyVirtualLibrary::Plugin::registerLibraries();
+			Plugins::EasyVirtualLibrary::Plugin::scheduleRegisterLibraries();
 		}
 	}
 
