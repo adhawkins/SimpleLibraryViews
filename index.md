@@ -3,8 +3,8 @@ layout: page
 title: Simple Library Views plugin
 ---
 
-Slimserver plugin for simple libary views
-=========================================
+Slimserver plugin for Simple Library Views
+==========================================
 
 This plugin provides an easy mechanism for defining library views for the
 Logitech Media Server.
