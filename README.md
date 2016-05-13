@@ -18,30 +18,23 @@ http://software.gently.org.uk/slim-plugins/repo.xml
 
 The 'Easy Virtual Libraries' plugin should now be available for installation.
 
-Configuration
--------------
+Usage
+-----
 
-There is a single configuration parameter for the plugin, available through the
-web interface in the normal manner.
+In order to use the Easy Virtual Library plugin, first you should define the names of the virtual libary views you wish to create. This is done by entering the list of library view names into the plugin's settings page, separating each name with a semi-colon.
 
-'Library names' is a semi-colon separated list of library views to define.
+Once the names of the library views have been defined, albums can be added to a library view by creating a file named:
 
-Changing this list triggers all library views to be rebuilt.
+'easy-virtual-library-libraryviewname' (note that this file name does not have any extension)
 
-Adding media to a library view
-------------------------------
-
-In order to add an album to a library view, simply create a file named:
-
-'easy-virtual-library-<libraryname>' 
-
-to the directory containing the album's media.
+in the directory containing the album's media.
 
 e.g. to add an album to the library 'audiobooks', create a file called 
 
-'easy-virtual-library-auiobooks' 
+'easy-virtual-library-audiobooks' 
 
 in the album's directory.
 
-The next time a scan is triggered, the library view will be updated to include the new album.
+Library views wiil be updated the next time a scan is triggered, or if changes are made to the list of library view names on the plugin's settings page.
+
 
