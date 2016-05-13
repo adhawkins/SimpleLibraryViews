@@ -1,8 +1,3 @@
----
-layout: page
-title: Simple Library Views plugin
----
-
 Slimserver plugin for simple libary views
 =========================================
 
@@ -19,7 +14,7 @@ Installation
 
 Add the following repository to your Logitech Media Server:
 
-http://software.gently.org.uk/slim-plugins/repo.xml
+http://adhawkins.github.io/SimpleLibraryViews/repo.xml
 
 The 'Simple Library Views' plugin should now be available for installation.
 
