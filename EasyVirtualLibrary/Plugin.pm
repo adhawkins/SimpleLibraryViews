@@ -14,10 +14,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use File::Basename;
 use Slim::Utils::Prefs;
-use Slim::Utils::Timers;
-use Time::HiRes;
-
-use constant REGISTER_LIBRARIES_DELAY => 5;
+use Slim::Control::Request;
 
 my $log = Slim::Utils::Log->addLogCategory({
         'category'     => 'plugin.easyvirtuallibrary',
@@ -42,7 +39,7 @@ sub initPlugin {
 		Plugins::EasyVirtualLibrary::Settings->new;
 	}
 
-	scheduleRegisterLibraries();
+	registerLibraries();
 
 	$class->SUPER::initPlugin(@_);
 }
@@ -50,11 +47,7 @@ sub initPlugin {
 sub scheduleRegisterLibraries {
 	$log->info("Scheduling library register");
 
-	Slim::Utils::Timers::killOneTimer( 1, \&registerLibraries );
-
-	Slim::Utils::Timers::setTimer( 1,
-		Time::HiRes::time() + REGISTER_LIBRARIES_DELAY,
-		\&registerLibraries );
+	Slim::Control::Request::executeRequest( undef, [ 'rescan' ] );
 }
 
 sub registerLibraries {
