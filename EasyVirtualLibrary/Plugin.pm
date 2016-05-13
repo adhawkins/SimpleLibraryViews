@@ -96,11 +96,11 @@ sub createLibrary {
 			my $url = $obj->get_column("url");
 			my $dir = dirname(Slim::Utils::Misc::pathFromFileURL($url));
 
-			#$log->info("ID: " . $trackid . ", URL: " . $url .	", path: " . $dir);
+			$log->debug("ID: " . $trackid . ", URL: " . $url .	", path: " . $dir);
 
 			my $libFile = $dir . "/easy-virtual-library-" . $libName;
 			if (-f $libFile) {
-				$log->info("Adding " . $url . " to library " . $libName);
+				$log->debug("Adding " . $url . " to library " . $libName);
 
 				my $dbh = Slim::Schema->dbh;
 				$dbh->do(
