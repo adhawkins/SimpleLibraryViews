@@ -14,7 +14,7 @@ Installation
 
 Add the following repository to your Logitech Media Server:
 
-http://software.gently.org.uk/slim-plugins/repo.xml
+http://adhawkins.github.io/SimpleLibraryViews/repo.xml
 
 The 'Simple Library Views' plugin should now be available for installation.
 
@@ -29,9 +29,9 @@ Once the names of the library views have been defined, albums can be added to a 
 
 in the directory containing the album's media.
 
-e.g. to add an album to the library 'audiobooks', create a file called 
+e.g. to add an album to the library 'audiobooks', create a file called
 
-'simple-library-views-audiobooks' 
+'simple-library-views-audiobooks'
 
 in the album's directory.
 
