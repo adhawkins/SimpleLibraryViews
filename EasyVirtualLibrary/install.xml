@@ -3,6 +3,7 @@
 	<id>011825f6-4e06-4d5a-aa48-fad6b59e837b</id>
 	<name>PLUGIN_EASY_VIRTUAL_LIBRARY</name>
 	<module>Plugins::EasyVirtualLibrary::Plugin</module>
+	<importmodule>Plugins::EasyVirtualLibrary::Plugin</importmodule>
 	<version>0.3.1</version>
 	<description>PLUGIN_EASY_VIRTUAL_LIBRARY_DESC</description>
 	<creator>Andy Hawkins</creator>
