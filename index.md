@@ -1,6 +1,6 @@
 ----
--layout: page
--title: Simple Library Views plugin
+layout: page
+title: Simple Library Views plugin
 ----
 
 Slimserver plugin for simple libary views
