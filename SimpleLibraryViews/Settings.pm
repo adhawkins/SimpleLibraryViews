@@ -1,4 +1,4 @@
-package Plugins::EasyVirtualLibrary::Settings;
+package Plugins::SimpleLibraryViews::Settings;
 
 use strict;
 use warnings;
@@ -8,8 +8,8 @@ use base qw(Slim::Web::Settings);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
-my $log = logger('plugin.easyvirtuallibrary');
-my $prefs = preferences('plugin.easyvirtuallibrary');
+my $log = logger('plugin.simplelibraryviews');
+my $prefs = preferences('plugin.simplelibraryviews');
 
 sub new {
 	my $class = shift;
@@ -18,11 +18,11 @@ sub new {
 }
 
 sub name {
-	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_EASY_VIRTUAL_LIBRARY');
+	return Slim::Web::HTTP::CSRF->protectName('PLUGIN_SIMPLE_LIBRARY_VIEWS');
 }
 
 sub page {
-	return Slim::Web::HTTP::CSRF->protectURI('plugins/EasyVirtualLibrary/settings/basic.html');
+	return Slim::Web::HTTP::CSRF->protectURI('plugins/SimpleLibraryViews/settings/basic.html');
 }
 
 sub prefs {
@@ -45,7 +45,7 @@ sub handler {
 
 		if ($force_register) {
 			$log->info("Forcing re-registering of libraries due to settings changes");
-			Plugins::EasyVirtualLibrary::Plugin::scheduleRegisterLibraries();
+			Plugins::SimpleLibraryViews::Plugin::scheduleRegisterLibraries();
 		}
 	}
 

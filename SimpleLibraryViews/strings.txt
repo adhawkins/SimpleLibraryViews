@@ -1,0 +1,14 @@
+PLUGIN_SIMPLE_LIBRARY_VIEWS
+	EN	Simple Library Views
+
+PLUGIN_SIMPLE_LIBRARY_VIEWS_DESC
+	EN	Plugin to easily generate library views.
+
+SETUP_GROUP_SIMPLE_LIBRARY_VIEWS_DESC
+	EN	The Simple Library Views plugin allows for the easy definition of Library Views by creating appropriately named files in an album's directory.
+
+SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_LIBRARIES
+	EN	Library view names
+
+SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_LIBRARIES_DESC
+	EN	A semi-colon separated list of library view names.

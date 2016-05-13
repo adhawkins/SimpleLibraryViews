@@ -1,0 +1,11 @@
+[% PROCESS settings/header.html %]
+
+	[% WRAPPER setting title="PLUGIN_SIMPLE_LIBRARY_VIEWS" desc="" %]
+		<div class="prefDesc">[% "SETUP_GROUP_SIMPLE_LIBRARY_VIEWS_DESC" | string %]</div>
+	[% END %]
+
+	[% WRAPPER setting title="SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_LIBRARIES" desc="SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_LIBRARIES_DESC" %]
+		<input type="text" class="stdedit" name="pref_libraries" value="[% prefs.pref_libraries %]" size="50" />
+	[% END %]
+
+[% PROCESS settings/footer.html %]

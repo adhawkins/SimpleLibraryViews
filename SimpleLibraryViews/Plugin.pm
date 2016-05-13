@@ -1,4 +1,4 @@
-package Plugins::EasyVirtualLibrary::Plugin;
+package Plugins::SimpleLibraryViews::Plugin;
 
 # Logitech Media Server Copyright 2001-2014 Logitech.
 # This program is free software; you can redistribute it and/or
@@ -17,26 +17,26 @@ use Slim::Utils::Prefs;
 use Slim::Control::Request;
 
 my $log = Slim::Utils::Log->addLogCategory({
-        'category'     => 'plugin.easyvirtuallibrary',
+        'category'     => 'plugin.simplelibraryviews',
         'defaultLevel' => 'WARN',
-        'description'  => 'PLUGIN_EASY_VIRTUAL_LIBRARY_DESC',
+        'description'  => 'PLUGIN_SIMPLE_LIBRARY_VIEWS_DESC',
 });
 
 if ( main::WEBUI ) {
-	require Plugins::EasyVirtualLibrary::Settings;
+	require Plugins::SimpleLibraryViews::Settings;
 }
 
-my $prefs = preferences('plugin.easyvirtuallibrary');
+my $prefs = preferences('plugin.simplelibraryviews');
 
 my @libraryIDs=();
 
 sub initPlugin {
 	my $class = shift;
 
-	$log->info("In initPlugin for EasyVirtualLibrary");
+	$log->info("In initPlugin for SimpleLibraryViews");
 
 	if ( main::WEBUI ) {
-		Plugins::EasyVirtualLibrary::Settings->new;
+		Plugins::SimpleLibraryViews::Settings->new;
 	}
 
 	registerLibraries();
@@ -70,7 +70,7 @@ sub registerLibraries {
 
 			my $newID = Slim::Music::VirtualLibraries->registerLibrary( {
 				id => $library,
-				name => "EasyVirtualLibrary $library",
+				name => "SimpleLibraryViews $library",
 				scannerCB => sub {
 					my $libraryId = shift;
 					createLibrary($libraryId, $library);
@@ -84,7 +84,7 @@ sub registerLibraries {
 }
 
 sub getDisplayName {
-	return 'PLUGIN_EASY_VIRTUAL_LIBRARY';
+	return 'PLUGIN_SIMPLE_LIBRARY_VIEWS';
 }
 
 sub createLibrary {
@@ -105,7 +105,7 @@ sub createLibrary {
 
 			$log->debug("ID: " . $trackid . ", URL: " . $url .	", path: " . $dir);
 
-			my $libFile = $dir . "/easy-virtual-library-" . $libName;
+			my $libFile = $dir . "/simple-library-views-" . $libName;
 			if (-f $libFile) {
 				$log->debug("Adding " . $url . " to library " . $libName);
 
