@@ -106,7 +106,9 @@ sub createLibrary {
 			$log->debug("ID: " . $trackid . ", URL: " . $url .	", path: " . $dir);
 
 			my $libFile = $dir . "/simple-library-views-" . $libName;
-			if (-f $libFile) {
+			my $newLibFile = $dir . "/.simple-library-views-" . $libName;
+
+			if (-f $libFile || -f $newLibFile) {
 				$log->debug("Adding " . $url . " to library " . $libName);
 
 				my $dbh = Slim::Schema->dbh;

@@ -25,13 +25,17 @@ In order to use the Simple Library Views plugin, first you should define the nam
 
 Once the names of the library views have been defined, albums can be added to a library view by creating a file named:
 
-'simple-library-views-libraryviewname' (note that this file name does not have any extension)
+'simple-library-views-libraryviewname' or '.simple-library-views-libraryviewname' (note that this file name does not have any extension)
 
 in the directory containing the album's media.
 
 e.g. to add an album to the library 'audiobooks', create a file called
 
 'simple-library-views-audiobooks'
+
+or
+
+'.simple-library-views-audiobooks'
 
 in the album's directory.
 
