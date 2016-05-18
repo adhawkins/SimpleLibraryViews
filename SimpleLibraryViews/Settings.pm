@@ -53,15 +53,9 @@ sub handler {
 	if ( $params->{'saveSettings'} ) {
 		$log->debug('Saving plugin preferences');
 
-		my $force_register = 0;
 		$log->debug("Comparing " . $prefs->get('libraries') . " with " . $params->{'pref_libraries'} );
 		if ( $prefs->get('libraries') ne $params->{'pref_libraries'} ) {
-			$log->debug("Preference 'libraries' changed");
 			$prefs->set( 'libraries', $params->{'pref_libraries'} );
-			$force_register = 1;
-		}
-
-		if ($force_register) {
 			$log->info("Forcing re-registering of libraries due to settings changes");
 			Plugins::SimpleLibraryViews::Plugin::scheduleRegisterLibraries();
 		}
