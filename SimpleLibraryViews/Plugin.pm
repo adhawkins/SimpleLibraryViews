@@ -68,8 +68,7 @@ sub scheduleRegisterLibraries {
 
 	my $libs = Slim::Music::VirtualLibraries->getLibraries();
 
-	foreach my $libid (keys % {$libs})
-	{
+	foreach my $libid (keys % {$libs}) {
 		my $name = Slim::Music::VirtualLibraries->getNameForId($libid);
 
 		$log->info("Found registered lib ID ". $libid . ", name '" . $name);
@@ -79,8 +78,7 @@ sub scheduleRegisterLibraries {
 		my $slvLib = $1;
 		$log->info("Found SLV lib: '" . $slvLib . "'");
 
-		if (! exists($newLibrariesHash{$slvLib}))
-		{
+		if (! exists($newLibrariesHash{$slvLib})) {
 			$log->info("Unregisering lib '" . $name . "'");
 			Slim::Music::VirtualLibraries->unregisterLibrary($libid);
 		}
