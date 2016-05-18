@@ -26,6 +26,7 @@ use Slim::Menu::BrowseLibrary;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use File::Basename;
+use File::Spec::Functions qw(catfile);
 use Slim::Utils::Prefs;
 use Slim::Control::Request;
 
@@ -123,34 +124,45 @@ sub createLibrary {
 
 	$log->info("Building library id " . $id . " for name " . $libName);
 
-	my $rs = Slim::Schema->resultset('Track')->search;
-	my $obj;
+	my $dbh = Slim::Schema->dbh;
+	
+	# prepare the insert SQL statement - no need to re-initialize for every track
+	my $sth_insert = $dbh->prepare('INSERT OR IGNORE INTO library_track (library, track) values (?, ?)');
 
-	do {
-		$obj = $rs->next;
-		if ($obj) {
-			my $trackid = $obj->get_column("id");
-			my $url = $obj->get_column("url");
+	# get track ID and URL for every single audio track in our library
+	my $sth = $dbh->prepare('SELECT id, url FROM tracks WHERE content_type NOT IN ("cpl", "src", "ssp", "dir") ORDER BY url');
+	$sth->execute();
+	
+	# use a hash to cache results of the library file checks
+	my %knownDirs;
+
+	# iterate over all tracks in our library
+	while ( my ($trackid, $url) = $sth->fetchrow_array ) {
+		# dirname would return the directory part of the file URL
+		# good enough to be used as the cache key
+		my $key = dirname($url);
+
+		# check the list of dirs we've seen before first
+		my $hasLibFile = $knownDirs{$key};
+		
+		# only check the library files if we don't have a defined result for this folder
+		if (!defined $hasLibFile) {
 			my $dir = dirname(Slim::Utils::Misc::pathFromFileURL($url));
 
-			$log->debug("ID: " . $trackid . ", URL: " . $url .	", path: " . $dir);
-
-			my $libFile = $dir . "/simple-library-views-" . $libName;
-			my $newLibFile = $dir . "/.simple-library-views-" . $libName;
-
-			if (-f $libFile || -f $newLibFile) {
-				$log->debug("Adding " . $url . " to library " . $libName);
-
-				my $dbh = Slim::Schema->dbh;
-				$dbh->do(
-					sprintf(
-							q{INSERT OR IGNORE INTO library_track (library, track) values ('%s','%s')},
-							$id, $trackid
-						)
-					);
-			}
+			my $libFile = catfile($dir, "simple-library-views-$libName");
+			my $newLibFile = catfile($dir, ".simple-library-views-$libName");
+			
+			$hasLibFile = $knownDirs{$key} = (-f $libFile || -f $newLibFile) ? 1 : 0;
 		}
-	} while ($obj);
+
+		main::DEBUGLOG && $log->is_debug && $log->debug("ID: " . $trackid . ", URL: " . $url . ", path: " . $url);
+
+		if ($hasLibFile) {
+			$log->debug("Adding " . $url . " to library " . $libName);
+			
+			$sth_insert->execute($id, $trackid);
+		}
+	}
 }
 
 1;
