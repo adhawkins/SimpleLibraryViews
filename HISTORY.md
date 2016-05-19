@@ -6,6 +6,14 @@ title: Simple Library Views plugin
 Revision History
 ================
 
+v0.99.2
+-------
+
+* Plugin now licensed under the GPL
+* Correctly register and unregister library views when changes are made in settings
+* Only actually build library views from scanner process, trigger a scan when appropriate
+* Performance enhancements in library view building (thanks to Michael Herger)
+
 v0.99.1
 -------
 
