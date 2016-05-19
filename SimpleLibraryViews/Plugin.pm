@@ -86,8 +86,6 @@ sub scheduleRegisterLibraries {
 	}
 
 	registerLibraries();
-
-	Slim::Control::Request::executeRequest( undef, [ 'rescan' ] );
 }
 
 sub registerLibraries {
@@ -112,6 +110,8 @@ sub registerLibraries {
 			$log->info("Registered library $newID");
 		}
 	}
+
+	Slim::Control::Request::executeRequest( undef, [ 'rescan' ] );
 }
 
 sub getDisplayName {
@@ -124,15 +124,19 @@ sub createLibrary {
 
 	$log->info("Building library id " . $id . " for name " . $libName);
 
+	return if ! main::SCANNER;
+
+	$log->info("Continuing");
+
 	my $dbh = Slim::Schema->dbh;
-	
+
 	# prepare the insert SQL statement - no need to re-initialize for every track
 	my $sth_insert = $dbh->prepare('INSERT OR IGNORE INTO library_track (library, track) values (?, ?)');
 
 	# get track ID and URL for every single audio track in our library
 	my $sth = $dbh->prepare('SELECT id, url FROM tracks WHERE content_type NOT IN ("cpl", "src", "ssp", "dir") ORDER BY url');
 	$sth->execute();
-	
+
 	# use a hash to cache results of the library file checks
 	my %knownDirs;
 
@@ -144,14 +148,14 @@ sub createLibrary {
 
 		# check the list of dirs we've seen before first
 		my $hasLibFile = $knownDirs{$key};
-		
+
 		# only check the library files if we don't have a defined result for this folder
 		if (!defined $hasLibFile) {
 			my $dir = dirname(Slim::Utils::Misc::pathFromFileURL($url));
 
 			my $libFile = catfile($dir, "simple-library-views-$libName");
 			my $newLibFile = catfile($dir, ".simple-library-views-$libName");
-			
+
 			$hasLibFile = $knownDirs{$key} = (-f $libFile || -f $newLibFile) ? 1 : 0;
 		}
 
@@ -159,7 +163,7 @@ sub createLibrary {
 
 		if ($hasLibFile) {
 			$log->debug("Adding " . $url . " to library " . $libName);
-			
+
 			$sth_insert->execute($id, $trackid);
 		}
 	}
