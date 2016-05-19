@@ -7,7 +7,7 @@ Slimserver plugin for simple libary views
 =========================================
 
 This plugin provides an easy mechanism for defining library views for the
-Logitech Media Server.
+Logitech Media Server. This software is licensed under the GPL.
 
 Requirements
 ------------
