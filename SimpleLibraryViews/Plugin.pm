@@ -47,6 +47,10 @@ sub initPlugin {
 
 	$log->info("In initPlugin for SimpleLibraryViews");
 
+	$prefs->init({
+		libraries => ''
+	});
+
 	if ( main::WEBUI ) {
 		Plugins::SimpleLibraryViews::Settings->new;
 	}
