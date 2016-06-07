@@ -19,7 +19,7 @@ Installation
 
 Add the following repository to your Logitech Media Server:
 
-http://adhawkins.github.io/SimpleLibraryViews/repo.xml
+[http://adhawkins.github.io/SimpleLibraryViews/repo.xml]
 
 The 'Simple Library Views' plugin should now be available for installation.
 
