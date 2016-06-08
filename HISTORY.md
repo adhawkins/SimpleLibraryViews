@@ -6,6 +6,11 @@ title: Simple Library Views plugin
 Revision History
 ================
 
+v1.0.0
+------
+
+* Correctly initialise preferences on new install
+
 v0.99.2
 -------
 
