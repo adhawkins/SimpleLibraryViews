@@ -4,8 +4,14 @@
 		<div class="prefDesc">[% "SETUP_GROUP_SIMPLE_LIBRARY_VIEWS_DESC" | string %]</div>
 	[% END %]
 
-	[% WRAPPER setting title="SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_LIBRARIES" desc="SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_LIBRARIES_DESC" %]
-		<input type="text" class="stdedit" name="pref_libraries" value="[% prefs.pref_libraries %]" size="50" />
+	[% WRAPPER setting title="SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_LIBRARIES" desc="" %]
+		<div>[% "SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_LIBRARIES_DESC" | string %]</div>
+		<div>
+		List<br>
+		[% FOREACH entry = libraries %]
+			<br/><input type="text" class="stdedit" name="libraries" id="libraries" value="[% entry %]" size="60" />
+		[% END %]
+		</div>
 	[% END %]
 
 [% PROCESS settings/footer.html %]
