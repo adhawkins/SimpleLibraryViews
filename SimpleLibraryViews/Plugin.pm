@@ -42,14 +42,27 @@ if ( main::WEBUI ) {
 
 my $prefs = preferences('plugin.simplelibraryviews');
 
+$prefs->init({
+	libraries => []
+});
+
+$prefs->migrate(1,
+	sub {
+		my @newLibraries;
+		my @oldLibraries = split(/;/, $prefs->get('libraries'));
+		foreach my $library (@oldLibraries) {
+			$library =~ s/^\s+|\s+$//g;
+			push @newLibraries, $library
+		}
+
+		$prefs->set('libraries', \@newLibraries);
+		1;
+	});
+
 sub initPlugin {
 	my $class = shift;
 
 	$log->info("In initPlugin for SimpleLibraryViews");
-
-	$prefs->init({
-		libraries => ''
-	});
 
 	if ( main::WEBUI ) {
 		Plugins::SimpleLibraryViews::Settings->new;
@@ -61,9 +74,9 @@ sub initPlugin {
 }
 
 sub scheduleRegisterLibraries {
-	$log->info("Scheduling library register, new: '" . $prefs->get('libraries') . "'");
+	$log->info("Scheduling library register, new: '" . join(", ", @{$prefs->get('libraries')}) . "'");
 
-	my @newLibraries = split(/;/, $prefs->get('libraries'));
+	my @newLibraries = $prefs->get('libraries');
 
 	foreach my $library (@newLibraries) {
 		$library =~ s/^\s+|\s+$//g;
@@ -84,7 +97,7 @@ sub scheduleRegisterLibraries {
 		$log->info("Found SLV lib: '" . $slvLib . "'");
 
 		if (! exists($newLibrariesHash{$slvLib})) {
-			$log->info("Unregisering lib '" . $name . "'");
+			$log->info("Unregistering lib '" . $name . "'");
 			Slim::Music::VirtualLibraries->unregisterLibrary($libid);
 		}
 	}
@@ -93,9 +106,9 @@ sub scheduleRegisterLibraries {
 }
 
 sub registerLibraries {
-	$log->info("In registerLibraries: '" . $prefs->get('libraries') . "'");
+	$log->info("In registerLibraries: '" . join(", ", @{$prefs->get('libraries')}) . "'");
 
-	my @libraries = split(/;/, $prefs->get('libraries'));
+	my @libraries = @{$prefs->get('libraries')};
 	foreach my $library (@libraries) {
 		$library =~ s/^\s+|\s+$//g;
 		$log->info("Checking library '$library'");
