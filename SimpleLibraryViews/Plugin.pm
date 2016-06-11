@@ -48,14 +48,17 @@ $prefs->init({
 
 $prefs->migrate(1,
 	sub {
-		my @newLibraries;
-		my @oldLibraries = split(/;/, $prefs->get('libraries'));
-		foreach my $library (@oldLibraries) {
-			$library =~ s/^\s+|\s+$//g;
-			push @newLibraries, $library
-		}
+		my $old=$prefs->get('libraries');
+		if (!ref $old) {
+			my @newLibraries;
+			my @oldLibraries = split(/;/, $old);
+			foreach my $library (@oldLibraries) {
+				$library =~ s/^\s+|\s+$//g;
+				push @newLibraries, $library
+			}
 
-		$prefs->set('libraries', \@newLibraries);
+			$prefs->set('libraries', \@newLibraries);
+		}
 		1;
 	});
 
