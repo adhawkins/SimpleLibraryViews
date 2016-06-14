@@ -53,11 +53,49 @@ sub handler {
 	if ( $params->{'saveSettings'} ) {
 		$log->debug('Saving plugin preferences');
 
-		$log->debug("Comparing " . $prefs->get('libraries') . " with " . $params->{'pref_libraries'} );
-		if ( $prefs->get('libraries') ne $params->{'pref_libraries'} ) {
-			$prefs->set( 'libraries', $params->{'pref_libraries'} );
-			$log->info("Forcing re-registering of libraries due to settings changes");
-			Plugins::SimpleLibraryViews::Plugin::scheduleRegisterLibraries();
+		my @unfiltered_new = (ref $params->{'pref_libraries'} eq 'ARRAY' ? @{$params->{'pref_libraries'}} : $params->{'pref_libraries'});
+		my @new = grep { $_ ne '' } @unfiltered_new;
+		my $changed = (@unfiltered_new != @new);
+
+		my %new     = map { $_ => 1 } @new;
+		my %current = map { $_ => 1 } @{ $prefs->get('libraries') || [] };
+
+		for my $library (keys %new) {
+			$log->info("Checking new " . $library . " in current");
+
+			if ($library ne "" ) {
+				if (!$current{$library}) {
+					$log->info("Not found");
+					Plugins::SimpleLibraryViews::Plugin::addLibraryView($library);
+					$changed = 1;
+				}
+			} else {
+				$log->info("It's empty - ignoring");
+			}
+		}
+
+		for my $library (keys %current) {
+			$log->info("Checking current " . $library . " in new");
+
+			if ($library ne "") {
+				if (!$new{$library}) {
+					$log->info("Not found");
+
+					Plugins::SimpleLibraryViews::Plugin::removeLibraryView($library);
+					$changed = 1;
+				}
+			} else {
+				$log->info("It's empty");
+			}
+		}
+
+		if ($changed) {
+			$log->info("Saving");
+			for my $library (@new) {
+				$log->info("New: " . $library);
+			}
+
+			$prefs->set('libraries', \@new);
 		}
 	}
 

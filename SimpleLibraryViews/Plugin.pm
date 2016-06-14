@@ -76,16 +76,27 @@ sub initPlugin {
 	$class->SUPER::initPlugin(@_);
 }
 
-sub scheduleRegisterLibraries {
-	$log->info("Scheduling library register, new: '" . join(", ", @{$prefs->get('libraries')}) . "'");
+sub addLibraryView {
+	my $library = shift;
 
-	my @newLibraries = $prefs->get('libraries');
+	$log->info("Adding library " . $library);
 
-	foreach my $library (@newLibraries) {
-		$library =~ s/^\s+|\s+$//g;
-	}
+	my $newID = Slim::Music::VirtualLibraries->registerLibrary( {
+		id => $library,
+		name => "SimpleLibraryViews $library",
+		scannerCB => sub {
+			my $libraryId = shift;
+			createLibrary($libraryId, $library);
+		}
+	} );
 
-	my %newLibrariesHash = map { $_ => 1 } @newLibraries;
+	$log->info("Registered library $newID");
+}
+
+sub removeLibraryView {
+	my $library = shift;
+
+	$log->info("Removing library " . $library);
 
 	my $libs = Slim::Music::VirtualLibraries->getLibraries();
 
@@ -99,13 +110,11 @@ sub scheduleRegisterLibraries {
 		my $slvLib = $1;
 		$log->info("Found SLV lib: '" . $slvLib . "'");
 
-		if (! exists($newLibrariesHash{$slvLib})) {
-			$log->info("Unregistering lib '" . $name . "'");
+		if ($slvLib eq $library) {
+			$log->info("Unregistering lib '" . $slvLib . "'");
 			Slim::Music::VirtualLibraries->unregisterLibrary($libid);
 		}
 	}
-
-	registerLibraries();
 }
 
 sub registerLibraries {
@@ -118,16 +127,7 @@ sub registerLibraries {
 		if ($library ne "" ) {
 			$log->info("Processing library '$library'");
 
-			my $newID = Slim::Music::VirtualLibraries->registerLibrary( {
-				id => $library,
-				name => "SimpleLibraryViews $library",
-				scannerCB => sub {
-					my $libraryId = shift;
-					createLibrary($libraryId, $library);
-				}
-			} );
-
-			$log->info("Registered library $newID");
+			addLibraryView($library);
 		}
 	}
 
