@@ -30,6 +30,8 @@ use File::Spec::Functions qw(catfile);
 use Slim::Utils::Prefs;
 use Slim::Control::Request;
 
+use constant SIMPLE_LIBRARY_VIEWS_SCAN_DELAY => 5;
+
 my $log = Slim::Utils::Log->addLogCategory({
         'category'     => 'plugin.simplelibraryviews',
         'defaultLevel' => 'WARN',
@@ -91,6 +93,8 @@ sub addLibraryView {
 	} );
 
 	$log->info("Registered library $newID");
+
+	scheduleScan();
 }
 
 sub removeLibraryView {
@@ -130,6 +134,20 @@ sub registerLibraries {
 			addLibraryView($library);
 		}
 	}
+}
+
+sub scheduleScan {
+	$log->info("In scheduleScan");
+
+	Slim::Utils::Timers::killOneTimer( 1, \&executeRescan );
+
+	Slim::Utils::Timers::setTimer( 1,
+		Time::HiRes::time() + SIMPLE_LIBRARY_VIEWS_SCAN_DELAY,
+		\&executeRescan );
+}
+
+sub executeRescan {
+	$log->info("In executeRescan");
 
 	Slim::Control::Request::executeRequest( undef, [ 'rescan' ] );
 }
