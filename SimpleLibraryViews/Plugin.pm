@@ -83,6 +83,8 @@ sub addLibraryView {
 
 	$log->info("Adding library " . $library);
 
+	Slim::Control::Request::executeRequest( undef, [ 'rescan' ] );
+
 	my $newID = Slim::Music::VirtualLibraries->registerLibrary( {
 		id => $library,
 		name => "SimpleLibraryViews $library",
