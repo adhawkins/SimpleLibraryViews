@@ -131,7 +131,17 @@ sub registerLibraries {
 		}
 	}
 
+	requestRescan();
+}
+
+sub requestRescan()
+{
+	$log->info("Requesting rescan");
+
+	Slim::Music::Import->doQueueScanTasks(1);
 	Slim::Control::Request::executeRequest( undef, [ 'rescan' ] );
+	Slim::Music::Import->doQueueScanTasks(0);
+	Slim::Music::Import->nextScanTask();
 }
 
 sub getDisplayName {
