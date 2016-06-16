@@ -57,9 +57,11 @@ sub handler {
 		my %new     = map { $_ => 1 } @$new;
 		my %current = map { $_ => 1 } @{ $prefs->get('libraries') || [] };
 
+		my $changed;
 		for my $library (keys %new) {
 			if (!$current{$library}) {
 				Plugins::SimpleLibraryViews::Plugin::addLibraryView($library);
+				$changed = 1;
 			}
 		}
 
@@ -67,11 +69,14 @@ sub handler {
 			if ($library ne "") {
 				if (!$new{$library}) {
 					Plugins::SimpleLibraryViews::Plugin::removeLibraryView($library);
+					$changed = 1;
 				}
 			}
 		}
 
 		$prefs->set('libraries', @$new);
+
+		Plugins::SimpleLibraryViews::Plugin::requestRescan() if $changed;
 	}
 
 	return $class->SUPER::handler($client, $params);
