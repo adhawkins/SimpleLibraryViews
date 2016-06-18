@@ -7,7 +7,6 @@
 	[% WRAPPER setting title="SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_LIBRARIES" desc="" %]
 		<div>[% "SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_LIBRARIES_DESC" | string %]</div>
 		<div>
-		List<br>
 		[% FOREACH entry = prefs.pref_libraries %]
 			<br/><input type="text" class="stdedit" name="pref_libraries" id="pref_libraries" value="[% entry %]" size="60" />
 		[% END %]
