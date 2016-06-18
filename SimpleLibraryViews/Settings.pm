@@ -51,32 +51,38 @@ sub handler {
 	my ($class, $client, $params, $callback, @args) = @_;
 
 	if ( $params->{'saveSettings'} ) {
-		my $new = $params->{'pref_libraries'};
-		@$new = grep { $_ ne '' } @$new;
-
-		my %new     = map { $_ => 1 } @$new;
-		my %current = map { $_ => 1 } @{ $prefs->get('libraries') || [] };
-
-		my $changed;
-		for my $library (keys %new) {
-			if (!$current{$library}) {
-				Plugins::SimpleLibraryViews::Plugin::addLibraryView($library);
-				$changed = 1;
+		if ($params->{'pref_libraries'} ne "") {
+			if ($params->{'pref_libraries'} && !ref $params->{'pref_libraries'}) {
+				$params->{'pref_libraries'} = [ $params->{'pref_libraries'} ];
 			}
-		}
 
-		for my $library (keys %current) {
-			if ($library ne "") {
-				if (!$new{$library}) {
-					Plugins::SimpleLibraryViews::Plugin::removeLibraryView($library);
+			my $new = $params->{'pref_libraries'};
+			@$new = grep { $_ ne '' } @$new;
+
+			my %new     = map { $_ => 1 } @$new;
+			my %current = map { $_ => 1 } @{ $prefs->get('libraries') || [] };
+
+			my $changed;
+			for my $library (keys %new) {
+				if (!$current{$library}) {
+					Plugins::SimpleLibraryViews::Plugin::addLibraryView($library);
 					$changed = 1;
 				}
 			}
+
+			for my $library (keys %current) {
+				if ($library ne "") {
+					if (!$new{$library}) {
+						Plugins::SimpleLibraryViews::Plugin::removeLibraryView($library);
+						$changed = 1;
+					}
+				}
+			}
+
+			$prefs->set('libraries', @$new);
+
+			Plugins::SimpleLibraryViews::Plugin::requestRescan() if $changed;
 		}
-
-		$prefs->set('libraries', @$new);
-
-		Plugins::SimpleLibraryViews::Plugin::requestRescan() if $changed;
 	}
 
 	return $class->SUPER::handler($client, $params);
