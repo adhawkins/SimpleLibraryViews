@@ -29,6 +29,7 @@ use File::Basename;
 use File::Spec::Functions qw(catfile);
 use Slim::Utils::Prefs;
 use Slim::Control::Request;
+use Path::Class;
 
 my $log = Slim::Utils::Log->addLogCategory({
         'category'     => 'plugin.simplelibraryviews',
@@ -126,11 +127,15 @@ sub createLibrary {
 	my $id = shift;
 	my $libName = shift;
 
-	$log->info("Building library id " . $id . " for name " . $libName);
+	$log->info("Scanner callback Building library id " . $id . " for name " . $libName);
 
-	return if ! main::SCANNER;
+	if ( ! main::SCANNER )
+	{
+		$log->info("Scanner callback Not in scanner building library id " . $id . " for name " . $libName);
+		return;
+	}
 
-	$log->info("Continuing");
+	$log->info("Scanner callback continuing");
 
 	my $dbh = Slim::Schema->dbh;
 
@@ -146,29 +151,43 @@ sub createLibrary {
 
 	# iterate over all tracks in our library
 	while ( my ($trackid, $url) = $sth->fetchrow_array ) {
-		# dirname would return the directory part of the file URL
-		# good enough to be used as the cache key
-		my $key = dirname($url);
+		main::DEBUGLOG && $log->is_debug && $log->debug("Checking trackID: $trackid, url: '$url'");
 
-		# check the list of dirs we've seen before first
-		my $hasLibFile = $knownDirs{$key};
-
-		# only check the library files if we don't have a defined result for this folder
-		if (!defined $hasLibFile) {
+		if (Slim::Music::Info::isFileURL($url)) {
+			my $addToView = 0;
 			my $dir = dirname(Slim::Utils::Misc::pathFromFileURL($url));
 
-			my $libFile = catfile($dir, "simple-library-views-$libName");
-			my $newLibFile = catfile($dir, ".simple-library-views-$libName");
+			while (Slim::Utils::Misc::inMediaFolder($dir)) {
+				my $cacheEntry = $knownDirs{$dir};
 
-			$hasLibFile = $knownDirs{$key} = (-f $libFile || -f $newLibFile) ? 1 : 0;
-		}
+				main::DEBUGLOG && $log->is_debug && $log->debug("Checking '$dir' ($cacheEntry)");
 
-		main::DEBUGLOG && $log->is_debug && $log->debug("ID: " . $trackid . ", URL: " . $url . ", path: " . $url);
+				if (defined($cacheEntry)) {
+					$addToView = $cacheEntry;
 
-		if ($hasLibFile) {
-			$log->debug("Adding " . $url . " to library " . $libName);
+					main::DEBUGLOG && $log->is_debug && $log->debug("In cache: $addToView");
+				} else {
+					main::DEBUGLOG && $log->is_debug && $log->debug("Not in cache, checking files");
 
-			$sth_insert->execute($id, $trackid);
+					my $libFile = catfile($dir, "simple-library-views-$libName");
+					my $newLibFile = catfile($dir, ".simple-library-views-$libName");
+
+					$addToView = (-f $libFile || -f $newLibFile) ? 1 : 0;
+					main::DEBUGLOG && $log->is_debug && $log->debug("Found files: $addToView");
+
+					$knownDirs{$dir} = $addToView;
+				}
+
+				last if $addToView;
+
+				$dir = dir($dir)->parent;
+			}
+
+			if ($addToView) {
+				$log->debug("Adding " . $url . " to library " . $libName);
+
+				$sth_insert->execute($id, $trackid);
+			}
 		}
 	}
 }
