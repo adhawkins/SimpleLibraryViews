@@ -3,7 +3,7 @@ layout: page
 title: Simple Library Views plugin
 ---
 
-Slimserver plugin for simple libary views
+Slimserver plugin for simple library views
 =========================================
 
 This plugin provides an easy mechanism for defining library views for the
@@ -26,7 +26,7 @@ The 'Simple Library Views' plugin should now be available for installation.
 Usage
 -----
 
-In order to use the Simple Library Views plugin, first you should define the names of the virtual libary views you wish to create. This is done by entering the list of library view names into the plugin's settings page, separating each name with a semi-colon.
+In order to use the Simple Library Views plugin, first you should define the names of the virtual library views you wish to create. This is done by entering the list of library view names into the plugin's settings page, separating each name with a semi-colon.
 
 Once the names of the library views have been defined, albums can be added to a library view by creating a file named:
 
