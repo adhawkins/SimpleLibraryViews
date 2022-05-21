@@ -137,58 +137,44 @@ sub createLibrary {
 
 	$log->info("Scanner callback continuing");
 
+	my $dirs = Slim::Utils::Misc::getAudioDirs();
+	if (ref $dirs ne 'ARRAY' || scalar @{$dirs} == 0) {
+		$log->info("Skipping library build - no folders defined.");
+	}
+
+	my @includeDirs;
+
+	foreach my $dir ( @{$dirs} ) {
+		$log->info("Processing '$dir'");
+
+		my $libraryName = quotemeta $libName;
+
+		my $iter = File::Next::files({
+			file_filter => sub {
+							/^\.simple-library-views-$libraryName$/ || /^simple-library-views-$libraryName$/;
+					}
+			},
+			$dir);
+
+		while ( defined ( my $file = $iter->() ) ) {
+				push @includeDirs, dirname($file);
+		}
+	}
+
 	my $dbh = Slim::Schema->dbh;
 
-	# prepare the insert SQL statement - no need to re-initialize for every track
-	my $sth_insert = $dbh->prepare('INSERT OR IGNORE INTO library_track (library, track) values (?, ?)');
+	my $sth_insert = $dbh->prepare('
+		INSERT OR IGNORE INTO library_track (library, track)
+		SELECT ?, tracks.id
+		FROM tracks
+		WHERE url like ?
+		AND content_type NOT IN ("cpl", "src", "ssp", "dir")
+	');
 
-	# get track ID and URL for every single audio track in our library
-	my $sth = $dbh->prepare('SELECT id, url FROM tracks WHERE content_type NOT IN ("cpl", "src", "ssp", "dir") ORDER BY url');
-	$sth->execute();
-
-	# use a hash to cache results of the library file checks
-	my %knownDirs;
-
-	# iterate over all tracks in our library
-	while ( my ($trackid, $url) = $sth->fetchrow_array ) {
-		main::DEBUGLOG && $log->is_debug && $log->debug("Checking trackID: $trackid, url: '$url'");
-
-		if (Slim::Music::Info::isFileURL($url)) {
-			my $addToView = 0;
-			my $dir = dirname(Slim::Utils::Misc::pathFromFileURL($url));
-
-			while (Slim::Utils::Misc::inMediaFolder($dir)) {
-				my $cacheEntry = $knownDirs{$dir};
-
-				main::DEBUGLOG && $log->is_debug && $log->debug("Checking '$dir' ($cacheEntry)");
-
-				if (defined($cacheEntry)) {
-					$addToView = $cacheEntry;
-
-					main::DEBUGLOG && $log->is_debug && $log->debug("In cache: $addToView");
-				} else {
-					main::DEBUGLOG && $log->is_debug && $log->debug("Not in cache, checking files");
-
-					my $libFile = catfile($dir, "simple-library-views-$libName");
-					my $newLibFile = catfile($dir, ".simple-library-views-$libName");
-
-					$addToView = (-f $libFile || -f $newLibFile) ? 1 : 0;
-					main::DEBUGLOG && $log->is_debug && $log->debug("Found files: $addToView");
-
-					$knownDirs{$dir} = $addToView;
-				}
-
-				last if $addToView;
-
-				$dir = dir($dir)->parent;
-			}
-
-			if ($addToView) {
-				$log->debug("Adding " . $url . " to library " . $libName);
-
-				$sth_insert->execute($id, $trackid);
-			}
-		}
+	foreach my $dir ( @includeDirs ) {
+		my $pathSearch = Slim::Utils::Misc::fileURLFromPath($dir) . File::Spec->catfile('', '') . "%";
+		$log->debug("$libName: Including '$dir', pathSearch: '$pathSearch'");
+		$sth_insert->execute($id, $pathSearch);
 	}
 }
 
