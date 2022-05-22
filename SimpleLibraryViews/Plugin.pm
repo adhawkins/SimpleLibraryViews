@@ -30,6 +30,7 @@ use File::Spec::Functions qw(catfile);
 use Slim::Utils::Prefs;
 use Slim::Control::Request;
 use Path::Class;
+use Data::Dump qw(dump);
 
 my $log = Slim::Utils::Log->addLogCategory({
         'category'     => 'plugin.simplelibraryviews',
@@ -42,6 +43,8 @@ if ( main::WEBUI ) {
 }
 
 my $prefs = preferences('plugin.simplelibraryviews');
+
+my %matchingDirectories;
 
 sub initPlugin {
 	my $class = shift;
@@ -141,25 +144,48 @@ sub createLibrary {
 	my $dirs = Slim::Utils::Misc::getAudioDirs();
 	if (ref $dirs ne 'ARRAY' || scalar @{$dirs} == 0) {
 		$log->info("Skipping library build - no folders defined.");
+		return;
 	}
 
-	my @includeDirs;
+	# Have we done the file search before?
 
-	foreach my $dir ( @{$dirs} ) {
-		$log->info("Processing '$dir'");
+	if ( ! keys %matchingDirectories ) {
+		$log->info("Doing file search");
 
-		my $libraryName = quotemeta $libName;
+		my %fileNames;
+		my @libraries = split(/;/, $prefs->get('libraries'));
 
-		my $iter = File::Next::files({
-			file_filter => sub {
-							/^\.simple-library-views-$libraryName$/ || /^simple-library-views-$libraryName$/;
-					}
-			},
-			$dir);
+		foreach my $library (@libraries) {
+			$library =~ s/^\s+|\s+$//g;
 
-		while ( defined ( my $file = $iter->() ) ) {
-				push @includeDirs, dirname($file);
+			$fileNames{ ".simple-library-views-$library" } = $library;
+			$fileNames{ "simple-library-views-$library" } = $library;
 		}
+
+		main::DEBUGLOG && $log->is_debug && $log->debug("Search files: " . dump(%fileNames));
+
+		foreach my $dir ( @{ $dirs } ) {
+			my $iter = File::Next::files({
+				file_filter => sub {
+								defined $fileNames{$_};
+						}
+				},
+				$dir);
+
+			while ( defined ( my $file = $iter->() ) ) {
+				my $fileOnly = basename($file);
+				my $library = $fileNames{$fileOnly};
+				my $dirOnly = dirname($file);
+
+				if ( ! defined $matchingDirectories{$library} ) {
+					$matchingDirectories{$library} = [ $dirOnly ];
+				} else {
+					push @ { $matchingDirectories{$library} }, $dirOnly;
+				}
+			}
+		}
+
+		main::DEBUGLOG && $log->is_debug && $log->debug("Matching dirs: " . dump(%matchingDirectories));
 	}
 
 	my $dbh = Slim::Schema->dbh;
@@ -191,7 +217,7 @@ sub createLibrary {
 		');
 	}
 
-	foreach my $dir ( @includeDirs ) {
+	foreach my $dir ( @ { $matchingDirectories{ $libName } } ) {
 		my $pathSearch = Slim::Utils::Misc::fileURLFromPath($dir) . "/%";
 		main::DEBUGLOG && $log->is_debug && $log->debug("$libName: Including '$dir', pathSearch: '$pathSearch'");
 
