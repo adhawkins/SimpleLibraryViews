@@ -3,10 +3,10 @@
 		<title lang="EN">Gently Slim Plugins</title>
 	</details>
 	<plugins>
-		<plugin name="SimpleLibraryViews" version="1.1.0ba" minTarget="7.9" maxTarget="*">
+		<plugin name="SimpleLibraryViews" version="1.1.0b" minTarget="7.9" maxTarget="*">
 			<title lang="EN">Simple Library Views</title>
 			<desc lang="EN">Plugin to easily generate library views.</desc>
-			<url>http://adhawkins.github.io/SimpleLibraryViews/SimpleLibraryViews-1.1.0a.zip</url>
+			<url>http://adhawkins.github.io/SimpleLibraryViews/SimpleLibraryViews-1.1.0b.zip</url>
 			<link>https://github.com/adhawkins/SimpleLibraryViews</link>
 			<creator>Andy Hawkins</creator>
 			<email>andy@gently.org.uk</email>
