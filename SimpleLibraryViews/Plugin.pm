@@ -85,7 +85,7 @@ sub scheduleRegisterLibraries {
 		$log->info("Found SLV lib: '" . $slvLib . "'");
 
 		if (! exists($newLibrariesHash{$slvLib})) {
-			$log->info("Unregisering lib '" . $name . "'");
+			$log->info("Unregistering lib '" . $name . "'");
 			Slim::Music::VirtualLibraries->unregisterLibrary($libid);
 		}
 	}
