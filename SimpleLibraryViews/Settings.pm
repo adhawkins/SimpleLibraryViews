@@ -44,7 +44,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, 'libraries');
+	return ($prefs, 'libraries', 'recursive');
 }
 
 sub handler {
@@ -53,10 +53,23 @@ sub handler {
 	if ( $params->{'saveSettings'} ) {
 		$log->debug('Saving plugin preferences');
 
+		my $rescan = 0;
+
 		$log->debug("Comparing " . $prefs->get('libraries') . " with " . $params->{'pref_libraries'} );
 		if ( $prefs->get('libraries') ne $params->{'pref_libraries'} ) {
 			$prefs->set( 'libraries', $params->{'pref_libraries'} );
-			$log->info("Forcing re-registering of libraries due to settings changes");
+			$log->info("Forcing re-registering of libraries due to library list changes");
+			$rescan = 1;
+		}
+
+		if ( $prefs->get('recursive') ne $params->{'pref_recursive'} ) {
+			$prefs->set( 'recursive', $params->{'pref_recursive'} );
+			$log->info("Forcing re-registering of libraries due to recursive setting change");
+			$rescan = 1;
+		}
+
+		if ($rescan) {
+			$log->info("Re-registering libraries");
 			Plugins::SimpleLibraryViews::Plugin::scheduleRegisterLibraries();
 		}
 	}

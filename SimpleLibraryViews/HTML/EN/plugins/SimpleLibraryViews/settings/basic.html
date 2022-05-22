@@ -8,4 +8,11 @@
 		<input type="text" class="stdedit" name="pref_libraries" value="[% prefs.pref_libraries %]" size="50" />
 	[% END %]
 
+	[% WRAPPER setting title="SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_RECURSIVE" desc="SETUP_PLUGIN_SIMPLE_LIBRARY_VIEWS_RECURSIVE_DESC" %]
+	<select class="stdedit" name="pref_recursive" id="recursive">
+			<option [% IF NOT prefs.recursive %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
+			<option [% IF prefs.recursive %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
+	</select>
+	[% END %]
+
 [% PROCESS settings/footer.html %]

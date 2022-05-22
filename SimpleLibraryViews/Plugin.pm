@@ -49,7 +49,8 @@ sub initPlugin {
 	$log->info("In initPlugin for SimpleLibraryViews");
 
 	$prefs->init({
-		libraries => ''
+		libraries => '',
+		recursive => 1,
 	});
 
 	if ( main::WEBUI ) {
@@ -163,18 +164,54 @@ sub createLibrary {
 
 	my $dbh = Slim::Schema->dbh;
 
-	my $sth_insert = $dbh->prepare('
-		INSERT OR IGNORE INTO library_track (library, track)
-		SELECT ?, tracks.id
-		FROM tracks
-		WHERE url like ?
-		AND content_type NOT IN ("cpl", "src", "ssp", "dir")
-	');
+	my $recursive = $prefs->get('recursive');
+	$log->info("Recursive: '$recursive'");
+
+	my $sth_recursive_insert;
+	my $sth_select;
+	my $sth_insert;
+
+	if ($recursive) {
+		$sth_recursive_insert = $dbh->prepare('
+			INSERT OR IGNORE INTO library_track (library, track)
+			SELECT ?, tracks.id
+			FROM tracks
+			WHERE url like ?
+			AND content_type NOT IN ("cpl", "src", "ssp", "dir")
+		');
+	} else {
+		$sth_select = $dbh->prepare('
+			SELECT id, url FROM tracks
+				WHERE url like ? AND content_type NOT IN ("cpl", "src", "ssp", "dir")
+				ORDER BY url
+		');
+
+		$sth_insert = $dbh->prepare('
+			INSERT OR IGNORE INTO library_track (library, track) values (?, ?)
+		');
+	}
 
 	foreach my $dir ( @includeDirs ) {
-		my $pathSearch = Slim::Utils::Misc::fileURLFromPath($dir) . File::Spec->catfile('', '') . "%";
-		$log->debug("$libName: Including '$dir', pathSearch: '$pathSearch'");
-		$sth_insert->execute($id, $pathSearch);
+		my $pathSearch = Slim::Utils::Misc::fileURLFromPath($dir) . "/%";
+		main::DEBUGLOG && $log->is_debug && $log->debug("$libName: Including '$dir', pathSearch: '$pathSearch'");
+
+		if ($recursive) {
+			$sth_recursive_insert->execute($id, $pathSearch);
+		} else {
+			$sth_select->execute($pathSearch);
+
+			while ( my ($trackid, $url) = $sth_select->fetchrow_array ) {
+				my $trackDir = dirname(Slim::Utils::Misc::pathFromFileURL($url));
+
+				main::DEBUGLOG && $log->is_debug && $log->debug("dir for '$url' is '$trackDir'");
+
+				if ( $trackDir eq $dir ) {
+					main::DEBUGLOG && $log->is_debug && $log->debug("Inserting");
+
+					$sth_insert->execute($id, $trackid);
+				}
+			}
+		}
 	}
 }
 
