@@ -110,6 +110,7 @@ sub registerLibraries {
 			my $newID = Slim::Music::VirtualLibraries->registerLibrary( {
 				id => $library,
 				name => "SimpleLibraryViews $library",
+				ignoreOnlineArtists => 1,
 				scannerCB => sub {
 					my $libraryId = shift;
 					createLibrary($libraryId, $library);
