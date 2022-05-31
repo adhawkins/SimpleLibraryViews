@@ -4,7 +4,7 @@
 	<name>PLUGIN_SIMPLE_LIBRARY_VIEWS</name>
 	<module>Plugins::SimpleLibraryViews::Plugin</module>
 	<importmodule>Plugins::SimpleLibraryViews::Plugin</importmodule>
-	<version>1.1.0d</version>
+	<version>@PLUGIN_VERSION@</version>
 	<description>PLUGIN_SIMPLE_LIBRARY_VIEWS_DESC</description>
 	<creator>Andy Hawkins</creator>
 	<defaultState>enabled</defaultState>

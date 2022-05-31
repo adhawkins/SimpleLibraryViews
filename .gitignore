@@ -1,2 +1,12 @@
 repo.xml
 *.zip
+_CPack_Packages/
+CMakeFiles/
+beta.xml
+CMakeCache.txt
+cmake_install.cmake
+CPackSourceConfig.cmake
+install_manifest.txt
+Makefile
+SimpleLibraryViews/install.xml
+CPackConfig.cmake
